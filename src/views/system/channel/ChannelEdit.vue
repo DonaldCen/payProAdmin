@@ -1,6 +1,6 @@
 <template>
   <a-drawer
-    title="修改通道名称"
+    title="修改通道"
     :maskClosable="false"
     width=650
     placement="right"
