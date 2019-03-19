@@ -12,7 +12,7 @@ export default {
     isMobile: false,
     theme: db.get('THEME', 'light'),
     layout: db.get('LAYOUT', 'side'),
-    systemName: '银兴聚合支付平台',
+    systemName: '盈宝聚合支付平台',
     copyright: `${new Date().getFullYear()} <a href="https://mrbird.cc" target="_blank">MrBird</a>`,
     multipage: getBooleanValue(db.get('MULTIPAGE'), true),
     fixSiderbar: getBooleanValue(db.get('FIX_SIDERBAR'), true),

@@ -2,6 +2,7 @@ import Vue from 'vue'
 import Febs from './FEBS'
 import router from './router'
 import Antd from 'ant-design-vue'
+import axios from 'axios'
 import store from './store'
 import request from 'utils/request'
 import db from 'utils/localstorage'
@@ -15,6 +16,7 @@ Vue.config.productionTip = false
 Vue.use(Antd)
 Vue.use(db)
 Vue.use(VueApexCharts)
+axios.defaults.baseURL = '/sys'
 
 Vue.component('apexchart', VueApexCharts)
 

@@ -85,37 +85,37 @@
       </a-table>
     </div>
     <!-- 用户信息查看 -->
-    <user-info
+    <merchant-info
       :userInfoData="userInfo.data"
       :userInfoVisiable="userInfo.visiable"
       @close="handleUserInfoClose">
-    </user-info>
+    </merchant-info>
     <!-- 新增用户 -->
-    <user-add
+    <merchant-add
       @close="handleUserAddClose"
       @success="handleUserAddSuccess"
       :userAddVisiable="userAdd.visiable">
-    </user-add>
+    </merchant-add>
     <!-- 修改用户 -->
-    <user-edit
+    <merchant-edit
       ref="userEdit"
       @close="handleUserEditClose"
       @success="handleUserEditSuccess"
       :userEditVisiable="userEdit.visiable">
-    </user-edit>
+    </merchant-edit>
   </a-card>
 </template>
 
 <script>
-import UserInfo from './UserInfo'
+import MerchantInfo from './MerchantInfo'
 import DeptInputTree from '../dept/DeptInputTree'
 import RangeDate from '@/components/datetime/RangeDate'
-import UserAdd from './UserAdd'
-import UserEdit from './UserEdit'
+import MerchantAdd from './MerchantAdd'
+import MerchantEdit from './MerchantEdit'
 
 export default {
   name: 'User',
-  components: {UserInfo, UserAdd, UserEdit, DeptInputTree, RangeDate},
+  components: {MerchantInfo, MerchantAdd, MerchantEdit, DeptInputTree, RangeDate},
   data () {
     return {
       advanced: false,
