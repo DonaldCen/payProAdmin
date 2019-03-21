@@ -9,71 +9,20 @@
     :visible="userAddVisiable"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
-      <a-form-item label='商户名'
+      <a-form-item label='银行支行名称'
                    v-bind="formItemLayout"
                    :validateStatus="validateStatus"
                    :help="help">
-        <a-input v-model="user.username"
-                 @blur="handleUserNameBlur"
-                 v-decorator="['username',{rules: [{ required: true, message: '商户名不能为空'}]}]"/>
-      </a-form-item>
-      <a-form-item label='密码' v-bind="formItemLayout">
-        <a-tooltip title='新商户默认密码为 1234qwer'>
-          <a-input type='password' readOnly :value="defaultPassword"/>
-        </a-tooltip>
-      </a-form-item>
-      <a-form-item label='邮箱' v-bind="formItemLayout">
-        <a-input
-          v-model="user.email"
-          v-decorator="['email',{rules: [
-            { type: 'email', message: '请输入正确的邮箱' },
-            { max: 50, message: '长度不能超过50个字符'}
-          ]}]"/>
-      </a-form-item>
-      <a-form-item label="手机" v-bind="formItemLayout">
-        <a-input
-          v-model="user.mobile"
-          v-decorator="['mobile', {rules: [
-            { pattern: '^0?(13[0-9]|15[012356789]|17[013678]|18[0-9]|14[57])[0-9]{8}$', message: '请输入正确的手机号'}
-          ]}]"/>
-      </a-form-item>
-      <a-form-item label='状态' v-bind="formItemLayout">
-        <a-radio-group
-          v-model="user.status"
-          v-decorator="['status',{rules: [{ required: true, message: '请选择状态'}]}]">
-          <a-radio value="0">锁定</a-radio>
-          <a-radio value="1">有效</a-radio>
-        </a-radio-group>
-      </a-form-item>
-      <a-form-item label='性别' v-bind="formItemLayout">
-        <a-radio-group
-          v-model="user.ssex"
-          v-decorator="['ssex',{rules: [{ required: true, message: '请选择性别' }]}]">
-          <a-radio value="0">男</a-radio>
-          <a-radio value="1">女</a-radio>
-          <a-radio value="2">保密</a-radio>
-        </a-radio-group>
-      </a-form-item>
-      <a-form-item label='身份证名称'
-                   v-bind="formItemLayout"
-                   :validateStatus="validateStatus"
-                   :help="help">
-        <a-input v-model="merchant.legalPersonName"
-                 v-decorator="['legalPersonName',{rules: [{ required: true, message: '身份证名称不能为空'}]}]"/>
-      </a-form-item>
-      <a-form-item label='营业执照'
-                   v-bind="formItemLayout"
-                   :validateStatus="validateStatus"
-                   :help="help">
-        <a-input v-model="merchant.busiLicenseNum"
-                 v-decorator="['busiLicenseNum',{rules: [{ required: true, message: '营业执照不能为空'}]}]"/>
-      </a-form-item>
-      <a-form-item label='身份证号码'
-                   v-bind="formItemLayout"
-                   :validateStatus="validateStatus"
-                   :help="help">
-        <a-input v-model="merchant.idCardNumber"
-                 v-decorator="['idCardNumber',{rules: [{ required: true, message: '身份证号码不能为空'}]}]"/>
+        <el-autocomplete
+          class="inline-input"
+          v-model="merchant.merchantName"
+          :fetch-suggestions="querySearch"
+          placeholder="请输入银行支行名称"
+          :trigger-on-focus="false"
+          :validateStatus="validateStatus"
+          :help="help"
+          v-decorator="['username',{rules: [{ required: true, message: '银行支行名称不能为空'}]}]"
+        ></el-autocomplete>
       </a-form-item>
     </a-form>
       <div class="drawer-bootom-button">
@@ -98,11 +47,8 @@ export default {
   },
   data () {
     return {
-      user: {
-        username: ''
-      },
       merchant: {
-        merchantName: ''
+        bankName: ''
       },
       loading: false,
       roleData: [],
