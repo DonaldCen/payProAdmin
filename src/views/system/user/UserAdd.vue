@@ -84,7 +84,7 @@
 </template>
 <script>
 const formItemLayout = {
-  labelCol: { span: 3 },
+  labelCol: { span: 4 },
   wrapperCol: { span: 18 }
 }
 export default {
@@ -96,6 +96,10 @@ export default {
   },
   data () {
     return {
+      parentId: 0,
+      merchant: {
+        bankName: ''
+      },
       user: {
         username: ''
       },
@@ -110,6 +114,11 @@ export default {
     }
   },
   methods: {
+
+    handleItemChange (val) {
+      console.log('active item:', val)
+      this.parentId = val
+    },
     reset () {
       this.validateStatus = ''
       this.help = ''

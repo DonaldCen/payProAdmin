@@ -9,20 +9,23 @@
     :visible="userAddVisiable"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
     <a-form :form="form">
+      <el-autocomplete
+        class="inline-input"
+        v-model="merchant.merchantName"
+        :fetch-suggestions="querySearch"
+        placeholder="请输入银行支行名称"
+        :trigger-on-focus="false"
+        :validateStatus="validateStatus"
+        :help="help"
+        v-decorator="['username',{rules: [{ required: true, message: '商户名不能为空'}]}]"
+      ></el-autocomplete>
       <a-form-item label='银行支行名称'
                    v-bind="formItemLayout"
                    :validateStatus="validateStatus"
                    :help="help">
-        <el-autocomplete
-          class="inline-input"
-          v-model="merchant.merchantName"
-          :fetch-suggestions="querySearch"
-          placeholder="请输入银行支行名称"
-          :trigger-on-focus="false"
-          :validateStatus="validateStatus"
-          :help="help"
-          v-decorator="['username',{rules: [{ required: true, message: '银行支行名称不能为空'}]}]"
-        ></el-autocomplete>
+        <a-input v-model="user.username"
+                 @blur="handleUserNameBlur"
+                 v-decorator="['username',{rules: [{ required: true, message: '商户名不能为空'}]}]"/>
       </a-form-item>
     </a-form>
       <div class="drawer-bootom-button">

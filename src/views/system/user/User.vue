@@ -94,7 +94,8 @@
     <user-add
       @close="handleUserAddClose"
       @success="handleUserAddSuccess"
-      :userAddVisiable="userAdd.visiable">
+      :userAddVisiable="userAdd.visiable"
+      :options="options">
     </user-add>
     <!-- 修改用户 -->
     <user-edit
@@ -118,6 +119,7 @@ export default {
   components: {UserInfo, UserAdd, UserEdit, DeptInputTree, RangeDate},
   data () {
     return {
+      options: [],
       advanced: false,
       userInfo: {
         visiable: false,
@@ -224,6 +226,7 @@ export default {
   },
   mounted () {
     this.fetch()
+    this.getBankList()
   },
   methods: {
     onSelectChange (selectedRowKeys) {
@@ -419,6 +422,16 @@ export default {
         this.pagination = pagination
         // 数据加载完毕，关闭loading
         this.loading = false
+      })
+    },
+    getBankList () {
+      this.$get('common/getParentBankList', {
+      }).then((r) => {
+        let data = r.data
+        if (data.code === 0) {
+          this.options = data.data
+        }
+      }).catch((r) => {
       })
     }
   }
