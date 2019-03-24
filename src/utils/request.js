@@ -110,6 +110,22 @@ const request = {
       }
     })
   },
+  postJson (url, params) {
+    return FEBS_REQUEST.post(url, params, {
+      transformRequest: [(params) => {
+        let result = ''
+        Object.keys(params).forEach((key) => {
+          if (!Object.is(params[key], undefined) && !Object.is(params[key], null)) {
+            result += encodeURIComponent(key) + '=' + encodeURIComponent(params[key]) + '&'
+          }
+        })
+        return result
+      }],
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
+  },
   get (url, params) {
     let _params
     if (Object.is(params, undefined)) {

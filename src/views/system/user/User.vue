@@ -78,6 +78,7 @@
         </template>
         <template slot="operation" slot-scope="text, record">
           <a-icon v-hasPermission="'user:update'" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修改用户"></a-icon>
+          <a-icon v-hasPermission="'user:update'" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="merchantInfo" title="商户"></a-icon>
           &nbsp;
           <a-icon v-hasPermission="'user:view'" type="eye" theme="twoTone" twoToneColor="#42b983" @click="view(record)" title="查看"></a-icon>
           <a-badge v-hasNoPermission="'user:update','user:view'" status="warning" text="无权限"></a-badge>
@@ -104,6 +105,8 @@
       @success="handleUserEditSuccess"
       :userEditVisiable="userEdit.visiable">
     </user-edit>
+    <merchant-regist :merchantRegist="merchantRegist.visiable" @close="handleUserEditClose">
+    </merchant-regist>
   </a-card>
 </template>
 
@@ -113,10 +116,11 @@ import DeptInputTree from '../dept/DeptInputTree'
 import RangeDate from '@/components/datetime/RangeDate'
 import UserAdd from './UserAdd'
 import UserEdit from './UserEdit'
+import MerchantRegist from './MerchantRegist'
 
 export default {
   name: 'User',
-  components: {UserInfo, UserAdd, UserEdit, DeptInputTree, RangeDate},
+  components: {UserInfo, UserAdd, UserEdit, MerchantRegist, DeptInputTree, RangeDate},
   data () {
     return {
       options: [],
@@ -129,6 +133,9 @@ export default {
         visiable: false
       },
       userEdit: {
+        visiable: false
+      },
+      merchantRegist: {
         visiable: false
       },
       queryParams: {},
@@ -253,6 +260,9 @@ export default {
       this.userAdd.visiable = false
       this.$message.success('新增用户成功，初始密码为1234qwer')
       this.search()
+    },
+    merchantInfo () {
+      this.merchantRegist.visiable = true
     },
     edit (record) {
       this.$refs.userEdit.setFormValues(record)
