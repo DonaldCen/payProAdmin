@@ -8,126 +8,189 @@
     @close="onClose"
     :visible="merchantRegist"
     style="height: calc(100% - 55px);overflow: auto;padding-bottom: 53px;">
-    <a-form-item label='银行' v-bind="formItemLayout">
-      <a-select
-        @change="handleBankChange"
-        style="width: 400px"
-        v-decorator="['bankId',{rules: [{ required: true, message: '请选择银行' }]}]">
-        <a-select-option v-for="bank in bankData" :key="bank.id">{{bank.bankName}}</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label='支行' v-bind="formItemLayout">
-      <a-auto-complete
-        style="width: 400px"
-        @search="handleBranchSearch"
-        placeholder="请输入详细支行信息"
-        @select="handleSubBankSelect"
-      >
-        <template slot="dataSource">
-          <a-select-option v-for="subBank in subBranch" :key="subBank.id.toString()">
-            {{subBank.bankName}}
-          </a-select-option>
-        </template>
-      </a-auto-complete>
-    </a-form-item>
-    <a-form-item label='费率' v-bind="formItemLayout">
-      <a-select
-        @change="handleRateChange"
-        style="width: 400px"
-        v-decorator="['bankId',{rules: [{ required: true, message: '请选择费率' }]}]">
-        <a-select-option v-for="rate in rateData" :key="rate.id">{{rate.rate + '%'}}</a-select-option>
-      </a-select>
-    </a-form-item>
-    <a-form-item label='银行省市' v-bind="formItemLayout">
-      <a-cascader :options="bankArea" style="width: 400px" @change="onChangeBankArea" :loadData="loadBankAreaData" placeholder="银行省市" changeOnSelect/>
-    </a-form-item>
-    <a-form-item label='门店省市' v-bind="formItemLayout">
-      <a-cascader :options="storeArea" style="width: 400px" @change="onChangeStoreArea" :loadData="loadBankStoreData" placeholder="门店省市" changeOnSelect/>
-    </a-form-item>
-    <a-form-item label='身份证正面照' v-bind="formItemLayout">
-      <div class="option-area">
-        <a-upload :fileList="idCardFrontFileList"
-                  class="upload-area"
-                  :remove="idCardFrontHandleRemove"
-                  :disabled="idCardFrontFileList.length === 1"
-                  :beforeUpload="idCardFrontBeforeUpload">
-          <a-button>
-            <a-icon type="upload" /> Upload
-          </a-button>
-        </a-upload>
-        <div class="button-area">
-          <a-button
-            @click="idCardFrontHandleUpload"
-            :disabled="idCardFrontFileList.length === 0"
-            :loading="idCardFrontUploading">
-            {{idCardFrontUploading ? '导入中' : '导入图片' }}
-          </a-button>
+    <a-form :form="form">
+      <a-form-item label='身份证正面照' v-bind="formItemLayout">
+        <div class="option-area">
+          <a-upload :fileList="idCardFrontFileList"
+                    class="upload-area"
+                    :remove="idCardFrontHandleRemove"
+                    :disabled="idCardFrontFileList.length === 1"
+                    :beforeUpload="idCardFrontBeforeUpload">
+            <a-button>
+              <a-icon type="upload" /> Upload
+            </a-button>
+          </a-upload>
+          <div class="button-area">
+            <a-button
+              @click="idCardFrontHandleUpload"
+              :disabled="idCardFrontFileList.length === 0"
+              :loading="idCardFrontUploading">
+              {{idCardFrontUploading ? '导入中' : '导入图片' }}
+            </a-button>
+          </div>
         </div>
-      </div>
-    </a-form-item>
-    <a-form-item label='身份证背面照' v-bind="formItemLayout">
-      <div class="option-area">
-        <a-upload :fileList="idCardBackFileList"
-                  class="upload-area"
-                  :remove="idCardBackHandleRemove"
-                  :disabled="idCardBackFileList.length === 1"
-                  :beforeUpload="idCardBackBeforeUpload">
-          <a-button>
-            <a-icon type="upload" /> Upload
-          </a-button>
-        </a-upload>
-        <div class="button-area">
-          <a-button
-            @click="idCardBackHandleUpload"
-            :disabled="idCardBackFileList.length === 0"
-            :loading="idCardBackUploading">
-            {{idCardBackUploading ? '导入中' : '导入图片' }}
-          </a-button>
+      </a-form-item>
+      <a-form-item label='身份证背面照' v-bind="formItemLayout">
+        <div class="option-area">
+          <a-upload :fileList="idCardBackFileList"
+                    class="upload-area"
+                    :remove="idCardBackHandleRemove"
+                    :disabled="idCardBackFileList.length === 1"
+                    :beforeUpload="idCardBackBeforeUpload">
+            <a-button>
+              <a-icon type="upload" /> Upload
+            </a-button>
+          </a-upload>
+          <div class="button-area">
+            <a-button
+              @click="idCardBackHandleUpload"
+              :disabled="idCardBackFileList.length === 0"
+              :loading="idCardBackUploading">
+              {{idCardBackUploading ? '导入中' : '导入图片' }}
+            </a-button>
+          </div>
         </div>
-      </div>
-    </a-form-item>
-    <a-form-item label='店内照' v-bind="formItemLayout">
-      <div class="option-area">
-        <a-upload :fileList="storeInFileList"
-                  class="upload-area"
-                  :remove="storeInHandleRemove"
-                  :disabled="storeInFileList.length === 1"
-                  :beforeUpload="storeInBeforeUpload">
-          <a-button>
-            <a-icon type="upload" /> Upload
-          </a-button>
-        </a-upload>
-        <div class="button-area">
-          <a-button
-            @click="storeInHandleUpload"
-            :disabled="storeInFileList.length === 0"
-            :loading="storeInUploading">
-            {{storeInUploading ? '导入中' : '导入图片' }}
-          </a-button>
+      </a-form-item>
+      <a-form-item label='身份证姓名'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.id_card_name"
+                 v-decorator="['id_card_name',{rules: [{ required: true, message: '身份证姓名不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='身份证号码'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.id_card_number"
+                 v-decorator="['id_card_number',{rules: [{ required: true, message: '身份证号码不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='身份证有效时间'
+                   v-bind="formItemLayout">
+        <a-range-picker @change="idCardDateOnChange" format="YYYY-MM-DD"/>
+      </a-form-item>
+      <a-form-item label='开户名称'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.account_name"
+                 v-decorator="['account_name',{rules: [{ required: true, message: '开户名称不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='开户银行' v-bind="formItemLayout">
+        <a-select
+          @change="handleBankChange"
+          style="width: 400px"
+          v-decorator="['bankId',{rules: [{ required: true, message: '请选择开户银行' }]}]">
+          <a-select-option v-for="bank in bankData" :key="bank.id">{{bank.bankName}}</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item label='银行省市' v-bind="formItemLayout">
+        <a-cascader :options="bankArea" style="width: 400px" @change="onChangeBankArea" :loadData="loadBankAreaData" placeholder="银行省市" changeOnSelect/>
+      </a-form-item>
+      <a-form-item label='银行全称' v-bind="formItemLayout">
+        <a-auto-complete
+          style="width: 400px"
+          @search="handleBranchSearch"
+          placeholder="请输入详细支行信息"
+          @select="handleSubBankSelect">
+          <template slot="dataSource">
+            <a-select-option v-for="subBank in subBranch" :key="subBank.id.toString()">
+              {{subBank.bankName}}
+            </a-select-option>
+          </template>
+        </a-auto-complete>
+      </a-form-item>
+      <a-form-item label='银行账户'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.account_number"
+                 v-decorator="['account_number',{rules: [{ required: true, message: '银行账户不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='门店名称'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.store_name"
+                 v-decorator="['store_name',{rules: [{ required: true, message: '门店名称不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='门店省市' v-bind="formItemLayout">
+        <a-cascader :options="storeArea" style="width: 400px" @change="onChangeStoreArea" :loadData="loadBankStoreData" placeholder="门店省市" changeOnSelect/>
+      </a-form-item>
+      <a-form-item label='街道名称'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.store_street"
+                 v-decorator="['store_street',{rules: [{ required: true, message: '街道名称不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='门店门口照' v-bind="formItemLayout">
+        <div class="option-area">
+          <a-upload :fileList="storeInFileList"
+                    class="upload-area"
+                    :remove="storeInHandleRemove"
+                    :disabled="storeInFileList.length === 1"
+                    :beforeUpload="storeInBeforeUpload">
+            <a-button>
+              <a-icon type="upload" /> Upload
+            </a-button>
+          </a-upload>
+          <div class="button-area">
+            <a-button
+              @click="storeInHandleUpload"
+              :disabled="storeInFileList.length === 0"
+              :loading="storeInUploading">
+              {{storeInUploading ? '导入中' : '导入图片' }}
+            </a-button>
+          </div>
         </div>
-      </div>
-    </a-form-item>
-    <a-form-item label='店外照' v-bind="formItemLayout">
-      <div class="option-area">
-        <a-upload :fileList="storeOutFileList"
-                  class="upload-area"
-                  :remove="storeOutHandleRemove"
-                  :disabled="storeOutFileList.length === 1"
-                  :beforeUpload="storeOutBeforeUpload">
-          <a-button>
-            <a-icon type="upload" /> Upload
-          </a-button>
-        </a-upload>
-        <div class="button-area">
-          <a-button
-            @click="storeOutHandleUpload"
-            :disabled="storeOutFileList.length === 0"
-            :loading="storeOutUploading">
-            {{storeOutUploading ? '导入中' : '导入图片' }}
-          </a-button>
+      </a-form-item>
+      <a-form-item label='店内环境照' v-bind="formItemLayout">
+        <div class="option-area">
+          <a-upload :fileList="storeOutFileList"
+                    class="upload-area"
+                    :remove="storeOutHandleRemove"
+                    :disabled="storeOutFileList.length === 1"
+                    :beforeUpload="storeOutBeforeUpload">
+            <a-button>
+              <a-icon type="upload" /> Upload
+            </a-button>
+          </a-upload>
+          <div class="button-area">
+            <a-button
+              @click="storeOutHandleUpload"
+              :disabled="storeOutFileList.length === 0"
+              :loading="storeOutUploading">
+              {{storeOutUploading ? '导入中' : '导入图片' }}
+            </a-button>
+          </div>
         </div>
-      </div>
-    </a-form-item>
+      </a-form-item>
+      <a-form-item label='商户简称'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.merchant_shortname"
+                 v-decorator="['merchant_shortname',{rules: [{ required: true, message: '商户简称不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='客服电话'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.service_phone"
+                 v-decorator="['service_phone',{rules: [{ required: true, message: '客服电话不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='商户描述'
+                   v-bind="formItemLayout">
+        <a-select
+          @change="handleProductDescChange"
+          style="width: 400px">
+          <a-select-option v-for="desc in productDescData" :key="desc">{{desc}}</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item label='费率' v-bind="formItemLayout">
+        <a-select
+          @change="handleRateChange"
+          style="width: 400px"
+          v-decorator="['bankId',{rules: [{ required: true, message: '请选择费率' }]}]">
+          <a-select-option v-for="rate in rateData" :key="rate.id">{{rate.rate + '%'}}</a-select-option>
+        </a-select>
+      </a-form-item>
+      <a-form-item label='联系人姓名'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.contact"
+                 v-decorator="['contact',{rules: [{ required: true, message: '联系人姓名不能为空'}]}]"/>
+      </a-form-item>
+      <a-form-item label='手机号'
+                   v-bind="formItemLayout">
+        <a-input v-model="resultData.contact_phone"
+                 v-decorator="['contact_phone',{rules: [{ required: true, message: '手机号不能为空'}]}]"/>
+      </a-form-item>
+    </a-form>
       <div class="drawer-bootom-button">
         <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">
           <a-button style="margin-right: .8rem">取消</a-button>
@@ -153,6 +216,7 @@ export default {
       resultData: {},
       bankData: [],
       rateData: [],
+      productDescData: [],
       bankArea: [],
       storeArea: [],
       subBranch: [],
@@ -181,8 +245,12 @@ export default {
     this.getBankList()
     this.getRateList()
     this.getBankAreaList()
+    this.getProductDescData()
   },
   methods: {
+    idCardDateOnChange (date, dateString) {
+      console.log(date, dateString)
+    },
     getBankList () {
       this.$get('common/getParentBankList').then((r) => {
         let code = r.data.code
@@ -202,6 +270,9 @@ export default {
           console.warn(r.data.msg)
         }
       })
+    },
+    getProductDescData () {
+      this.productDescData = ['餐饮', '线下零售', '居民生活服务', '休闲娱乐', '交通出行', '其他']
     },
     getBankAreaList () {
       this.$get('common/getBankAreaList').then((r) => {
@@ -287,6 +358,10 @@ export default {
     // 费率选择
     handleRateChange (val) {
       this.resultData.rateId = val
+    },
+    // 商家描述
+    handleProductDescChange (val) {
+      this.resultData.product_desc = val
     },
     // 银行支行ID选择
     handleSubBankSelect (val) {
