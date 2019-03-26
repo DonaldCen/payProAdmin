@@ -448,6 +448,9 @@ export default {
       this.$upload('common/addImage', formData).then((r) => {
         this.idCardFrontUploading = false
         this.idCardFrontFileList = []
+        if (r.data.code === 0) {
+          this.resultData.id_card_copy = r.data.data
+        }
       }).catch((r) => {
         console.error(r)
         this.idCardFrontUploading = false
@@ -463,6 +466,9 @@ export default {
       this.$upload('common/addImage', formData).then((r) => {
         this.idCardBackUploading = false
         this.idCardBackFileList = []
+        if (r.data.code === 0) {
+          this.resultData.id_card_national = r.data.data
+        }
       }).catch((r) => {
         console.error(r)
         this.idCardBackUploading = false
@@ -478,6 +484,9 @@ export default {
       this.$upload('common/addImage', formData).then((r) => {
         this.storeInUploading = false
         this.storeInFileList = []
+        if (r.data.code === 0) {
+          this.resultData.store_entrance_pic = r.data.data
+        }
       }).catch((r) => {
         console.error(r)
         this.storeInUploading = false
@@ -493,6 +502,9 @@ export default {
       this.$upload('common/addImage', formData).then((r) => {
         this.storeOutUploading = false
         this.storeOutFileList = []
+        if (r.data.code === 0) {
+          this.resultData.indoor_pic = r.data.data
+        }
       }).catch((r) => {
         console.error(r)
         this.storeOutUploading = false
