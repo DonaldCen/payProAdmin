@@ -13,16 +13,6 @@
                 <a-input v-model="queryParams.username"/>
               </a-form-item>
             </a-col>
-            <a-col :md="12" :sm="24" >
-              <a-form-item
-                label="部门"
-                :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
-                <dept-input-tree @change="handleDeptChange"
-                                 ref="deptTree">
-                </dept-input-tree>
-              </a-form-item>
-            </a-col>
           <template v-if="advanced">
             <a-col :md="12" :sm="24" >
               <a-form-item
@@ -84,44 +74,28 @@
         </template>
       </a-table>
     </div>
-    <!-- 用户信息查看 -->
-    <merchant-info
-      :userInfoData="userInfo.data"
-      :userInfoVisiable="userInfo.visiable"
-      @close="handleUserInfoClose">
-    </merchant-info>
-    <!-- 新增用户 -->
-    <merchant-add
-      @close="handleUserAddClose"
-      @success="handleUserAddSuccess"
-      :userAddVisiable="userAdd.visiable">
-    </merchant-add>
-    <!-- 修改用户 -->
-    <merchant-edit
-      ref="userEdit"
-      @close="handleUserEditClose"
-      @success="handleUserEditSuccess"
-      :userEditVisiable="userEdit.visiable">
-    </merchant-edit>
+    <merchant-regist :merchantRegist="merchantRegist.visiable" @close="handleMerchantRegistClose">
+    </merchant-regist>
   </a-card>
 </template>
 
 <script>
-import MerchantInfo from './MerchantInfo'
 import DeptInputTree from '../dept/DeptInputTree'
 import RangeDate from '@/components/datetime/RangeDate'
-import MerchantAdd from './MerchantAdd'
-import MerchantEdit from './MerchantEdit'
+import MerchantRegist from './MerchantRegist'
 
 export default {
-  name: 'User',
-  components: {MerchantInfo, MerchantAdd, MerchantEdit, DeptInputTree, RangeDate},
+  name: 'Merchant',
+  components: {DeptInputTree, RangeDate, MerchantRegist},
   data () {
     return {
       advanced: false,
       userInfo: {
         visiable: false,
         data: {}
+      },
+      merchantRegist: {
+        visiable: false
       },
       userAdd: {
         visiable: false
@@ -148,73 +122,83 @@ export default {
   },
   computed: {
     columns () {
-      let { sortedInfo, filteredInfo } = this
+      let { sortedInfo } = this
       sortedInfo = sortedInfo || {}
-      filteredInfo = filteredInfo || {}
       return [{
-        title: '用户名',
-        dataIndex: 'username',
+        title: '身份证姓名',
+        dataIndex: 'idCardName',
         sorter: true,
-        sortOrder: sortedInfo.columnKey === 'username' && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === 'idCardName' && sortedInfo.order
       }, {
-        title: '性别',
-        dataIndex: 'ssex',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '0':
-              return '男'
-            case '1':
-              return '女'
-            case '2':
-              return '保密'
-            default:
-              return text
-          }
-        },
-        filters: [
-          { text: '男', value: '0' },
-          { text: '女', value: '1' },
-          { text: '保密', value: '2' }
-        ],
-        filterMultiple: false,
-        filteredValue: filteredInfo.ssex || null,
-        onFilter: (value, record) => record.ssex.includes(value)
-      }, {
-        title: '邮箱',
-        dataIndex: 'email',
-        scopedSlots: { customRender: 'email' },
-        width: 100
-      }, {
-        title: '部门',
-        dataIndex: 'deptName'
-      }, {
-        title: '电话',
-        dataIndex: 'mobile'
-      }, {
-        title: '状态',
-        dataIndex: 'status',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case '0':
-              return <a-tag color="red">锁定</a-tag>
-            case '1':
-              return <a-tag color="cyan">有效</a-tag>
-            default:
-              return text
-          }
-        },
-        filters: [
-          { text: '有效', value: '1' },
-          { text: '锁定', value: '0' }
-        ],
-        filterMultiple: false,
-        filteredValue: filteredInfo.status || null,
-        onFilter: (value, record) => record.status.includes(value)
-      }, {
-        title: '创建时间',
-        dataIndex: 'createTime',
+        title: '身份证号码',
+        dataIndex: 'idCardNumber',
         sorter: true,
-        sortOrder: sortedInfo.columnKey === 'createTime' && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === 'idCardNumber' && sortedInfo.order
+      }, {
+        title: '身份证有效期限',
+        dataIndex: 'idCardValidTime',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'idCardValidTime' && sortedInfo.order
+      }, {
+        title: '开户名称',
+        dataIndex: 'accountName',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'accountName' && sortedInfo.order
+      }, {
+        title: '开户银行',
+        dataIndex: 'accountBank',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'accountBank' && sortedInfo.order
+      }, {
+        title: '开户银行全称',
+        dataIndex: 'bankName',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'bankName' && sortedInfo.order
+      }, {
+        title: '银行账号',
+        dataIndex: 'accountNumber',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'accountNumber' && sortedInfo.order
+      }, {
+        title: '门店街道名称',
+        dataIndex: 'storeStreet',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'storeStreet' && sortedInfo.order
+      }, {
+        title: '商户简称',
+        dataIndex: 'merchantShortName',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'merchantShortName' && sortedInfo.order
+      }, {
+        title: '客服电话',
+        dataIndex: 'servicePhone',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'servicePhone' && sortedInfo.order
+      }, {
+        title: '售卖商品/提供服务描述',
+        dataIndex: 'productDesc',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'productDesc' && sortedInfo.order
+      }, {
+        title: '费率',
+        dataIndex: 'rate',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'rate' && sortedInfo.order
+      }, {
+        title: '联系人姓名',
+        dataIndex: 'contact',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'contact' && sortedInfo.order
+      }, {
+        title: '手机号码',
+        dataIndex: 'contact_phone',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'contact_phone' && sortedInfo.order
+      }, {
+        title: '联系邮箱',
+        dataIndex: 'contactEmail',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'contactEmail' && sortedInfo.order
       }, {
         title: '操作',
         dataIndex: 'operation',
@@ -265,6 +249,9 @@ export default {
     },
     handleUserInfoClose () {
       this.userInfo.visiable = false
+    },
+    handleMerchantRegistClose () {
+      this.merchantRegist.visiable = false
     },
     handleDeptChange (value) {
       this.queryParams.deptId = value || ''
