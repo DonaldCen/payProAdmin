@@ -63,7 +63,9 @@
       </a-form-item>
       <a-form-item label='身份证有效时间'
                    v-bind="formItemLayout">
-        <a-range-picker @change="idCardDateOnChange" format="YYYY-MM-DD"/>
+        <a-range-picker @change="idCardDateOnChange" format="YYYY-MM-DD"
+                        v-model="resultData.id_card_valid_time"
+                        v-decorator="['id_card_valid_time',{rules: [{ required: true, message: '身份证有效时间不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='开户名称'
                    v-bind="formItemLayout">
@@ -79,13 +81,15 @@
         </a-select>
       </a-form-item>
       <a-form-item label='银行省市' v-bind="formItemLayout">
-        <a-cascader :options="bankArea" style="width: 400px" @change="onChangeBankArea" :loadData="loadBankAreaData" placeholder="银行省市" changeOnSelect/>
+        <a-cascader :options="bankArea" style="width: 400px" @change="onChangeBankArea" :loadData="loadBankAreaData"
+                    placeholder="银行省市" changeOnSelect  v-decorator="['bankId',{rules: [{ required: true, message: '请选择银行省市' }]}]"/>
       </a-form-item>
       <a-form-item label='银行全称' v-bind="formItemLayout">
         <a-auto-complete
           style="width: 400px"
           @search="handleBranchSearch"
           placeholder="请输入详细支行信息"
+          v-model="resultData.bank_name"
           @select="handleSubBankSelect">
           <template slot="dataSource">
             <a-select-option v-for="subBank in subBranch" :key="subBank.id.toString()">
@@ -176,7 +180,7 @@
         <a-select
           @change="handleRateChange"
           style="width: 400px"
-          v-decorator="['bankId',{rules: [{ required: true, message: '请选择费率' }]}]">
+          v-decorator="['rateId',{rules: [{ required: true, message: '请选择费率' }]}]">
           <a-select-option v-for="rate in rateData" :key="rate.id">{{rate.rate + '%'}}</a-select-option>
         </a-select>
       </a-form-item>
@@ -201,7 +205,7 @@
 </template>
 <script>
 const formItemLayout = {
-  labelCol: { span: 5 },
+  labelCol: { span: 6 },
   wrapperCol: { span: 18 }
 }
 export default {
@@ -248,8 +252,9 @@ export default {
     this.getProductDescData()
   },
   methods: {
+    // 身份证有效期选择
     idCardDateOnChange (date, dateString) {
-      console.log(date, dateString)
+      this.resultData.id_card_valid_time = dateString
     },
     getBankList () {
       this.$get('common/getParentBankList').then((r) => {
@@ -296,7 +301,7 @@ export default {
       let length = val.length
       if (length === 3) {
         let bankAreaId = val[length - 1]
-        this.resultData.bankAreaId = bankAreaId
+        this.resultData.bank_address_code = bankAreaId
       }
     },
     // 门店 省市选择
@@ -304,7 +309,7 @@ export default {
       let length = val.length
       if (length === 3) {
         let storeAreaId = val[length - 1]
-        this.resultData.storeAreaId = storeAreaId
+        this.resultData.store_address_code = storeAreaId
       }
     },
     // 加载银行 省市
@@ -515,8 +520,17 @@ export default {
       this.reset()
       this.$emit('close')
     },
+    // 提交进件请求
     handleSubmit () {
-      this.$emit('success')
+      this.$post('common/getBankListByName', {
+        ...this.resultData
+      }).then((r) => {
+        let code = r.data.code
+        if (code === 0) {
+          this.$emit('success')
+        }
+      }).catch(() => {
+      })
     }
   },
   watch: {
