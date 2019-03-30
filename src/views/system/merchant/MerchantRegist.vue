@@ -2,7 +2,7 @@
   <a-drawer
     title="商户进件"
     :maskClosable="false"
-    width=500
+    width=650
     placement="right"
     :closable="false"
     @close="onClose"
@@ -15,7 +15,9 @@
                     class="upload-area"
                     :remove="idCardFrontHandleRemove"
                     :disabled="idCardFrontFileList.length === 1"
-                    :beforeUpload="idCardFrontBeforeUpload">
+                    :beforeUpload="idCardFrontBeforeUpload"
+                    v-decorator="['id_card_copy',{rules: [{ required: true, message: '身份证正面照不能为空'}]}]"
+          >
             <a-button>
               <a-icon type="upload" /> Upload
             </a-button>
@@ -36,7 +38,9 @@
                     class="upload-area"
                     :remove="idCardBackHandleRemove"
                     :disabled="idCardBackFileList.length === 1"
-                    :beforeUpload="idCardBackBeforeUpload">
+                    :beforeUpload="idCardBackBeforeUpload"
+                    v-decorator="['id_card_national',{rules: [{ required: true, message: '身份证背面照不能为空'}]}]"
+          >
             <a-button>
               <a-icon type="upload" /> Upload
             </a-button>
@@ -63,7 +67,8 @@
       </a-form-item>
       <a-form-item label='身份证有效时间'
                    v-bind="formItemLayout">
-        <a-range-picker @change="idCardDateOnChange" format="YYYY-MM-DD"/>
+        <a-range-picker @change="idCardDateOnChange" format="YYYY-MM-DD"
+                        v-decorator="['id_card_valid_time',{rules: [{ required: true, message: '身份证有效时间不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='开户名称'
                    v-bind="formItemLayout">
@@ -79,13 +84,16 @@
         </a-select>
       </a-form-item>
       <a-form-item label='银行省市' v-bind="formItemLayout">
-        <a-cascader :options="bankArea" style="width: 400px" @change="onChangeBankArea" :loadData="loadBankAreaData" placeholder="银行省市" changeOnSelect/>
+        <a-cascader :options="bankArea" style="width: 400px" @change="onChangeBankArea" :loadData="loadBankAreaData"
+                    placeholder="银行省市" changeOnSelect  v-decorator="['bank_address_code',{rules: [{ required: true, message: '请选择银行省市' }]}]"/>
       </a-form-item>
       <a-form-item label='银行全称' v-bind="formItemLayout">
         <a-auto-complete
           style="width: 400px"
           @search="handleBranchSearch"
           placeholder="请输入详细支行信息"
+          v-model="resultData.bank_name"
+          v-decorator="['bank_name',{rules: [{ required: true, message: '详细支行信息不能为空'}]}]"
           @select="handleSubBankSelect">
           <template slot="dataSource">
             <a-select-option v-for="subBank in subBranch" :key="subBank.id.toString()">
@@ -105,7 +113,12 @@
                  v-decorator="['store_name',{rules: [{ required: true, message: '门店名称不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='门店省市' v-bind="formItemLayout">
-        <a-cascader :options="storeArea" style="width: 400px" @change="onChangeStoreArea" :loadData="loadBankStoreData" placeholder="门店省市" changeOnSelect/>
+        <a-cascader :options="storeArea" style="width: 400px"
+                    @change="onChangeStoreArea"
+                    :loadData="loadBankStoreData"
+                    placeholder="门店省市" changeOnSelect
+                    v-decorator="['store_address_code',{rules: [{ required: true, message: '门店省市不能为空'}]}]"
+        />
       </a-form-item>
       <a-form-item label='街道名称'
                    v-bind="formItemLayout">
@@ -118,7 +131,9 @@
                     class="upload-area"
                     :remove="storeInHandleRemove"
                     :disabled="storeInFileList.length === 1"
-                    :beforeUpload="storeInBeforeUpload">
+                    :beforeUpload="storeInBeforeUpload"
+                    v-decorator="['store_entrance_pic',{rules: [{ required: true, message: '门店门口照不能为空'}]}]"
+          >
             <a-button>
               <a-icon type="upload" /> Upload
             </a-button>
@@ -139,7 +154,9 @@
                     class="upload-area"
                     :remove="storeOutHandleRemove"
                     :disabled="storeOutFileList.length === 1"
-                    :beforeUpload="storeOutBeforeUpload">
+                    :beforeUpload="storeOutBeforeUpload"
+                    v-decorator="['indoor_pic',{rules: [{ required: true, message: '店内环境照不能为空'}]}]"
+          >
             <a-button>
               <a-icon type="upload" /> Upload
             </a-button>
@@ -168,7 +185,9 @@
                    v-bind="formItemLayout">
         <a-select
           @change="handleProductDescChange"
-          style="width: 400px">
+          style="width: 400px"
+          v-decorator="['product_desc',{rules: [{ required: true, message: '客服电话不能为空'}]}]"
+        >
           <a-select-option v-for="desc in productDescData" :key="desc">{{desc}}</a-select-option>
         </a-select>
       </a-form-item>
@@ -176,8 +195,8 @@
         <a-select
           @change="handleRateChange"
           style="width: 400px"
-          v-decorator="['bankId',{rules: [{ required: true, message: '请选择费率' }]}]">
-          <a-select-option v-for="rate in rateData" :key="rate.id">{{rate.rate + '%'}}</a-select-option>
+          v-decorator="['rateId',{rules: [{ required: true, message: '请选择费率' }]}]">
+          <a-select-option v-for="rate in rateData" :key="rate.id">{{rate.rate}}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item label='联系人姓名'
@@ -191,17 +210,17 @@
                  v-decorator="['contact_phone',{rules: [{ required: true, message: '手机号不能为空'}]}]"/>
       </a-form-item>
     </a-form>
-      <div class="drawer-bootom-button">
-        <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">
-          <a-button style="margin-right: .8rem">取消</a-button>
-        </a-popconfirm>
-        <a-button @click="handleSubmit" type="primary" :loading="loading">提交</a-button>
-      </div>
+    <div class="drawer-bootom-button">
+      <a-popconfirm title="确定放弃编辑？" @confirm="onClose" okText="确定" cancelText="取消">
+        <a-button style="margin-right: .8rem">取消</a-button>
+      </a-popconfirm>
+      <a-button @click="handleSubmit" type="primary" :loading="loading">提交</a-button>
+    </div>
   </a-drawer>
 </template>
 <script>
 const formItemLayout = {
-  labelCol: { span: 5 },
+  labelCol: { span: 6 },
   wrapperCol: { span: 18 }
 }
 export default {
@@ -248,8 +267,9 @@ export default {
     this.getProductDescData()
   },
   methods: {
+    // 身份证有效期选择
     idCardDateOnChange (date, dateString) {
-      console.log(date, dateString)
+      this.resultData.id_card_valid_time = dateString
     },
     getBankList () {
       this.$get('common/getParentBankList').then((r) => {
@@ -296,7 +316,7 @@ export default {
       let length = val.length
       if (length === 3) {
         let bankAreaId = val[length - 1]
-        this.resultData.bankAreaId = bankAreaId
+        this.resultData.bank_address_code = bankAreaId
       }
     },
     // 门店 省市选择
@@ -304,7 +324,7 @@ export default {
       let length = val.length
       if (length === 3) {
         let storeAreaId = val[length - 1]
-        this.resultData.storeAreaId = storeAreaId
+        this.resultData.store_address_code = storeAreaId
       }
     },
     // 加载银行 省市
@@ -373,15 +393,21 @@ export default {
         'parentId': parentId,
         'bankName': val
       }
-      this.$post('common/getBankListByName', {
-        ...bank
-      }).then((r) => {
-        let code = r.data.code
-        if (code === 0) {
-          this.subBranch = r.data.data
-        }
-      }).catch(() => {
-      })
+      if (this.resultData.bankId == null || this.resultData.bankId === 0) {
+        this.$message.warning('请先选择开户银行！再输入支行信息')
+        return
+      }
+      if (val != null && val !== '') {
+        this.$post('common/getBankListByName', {
+          ...bank
+        }).then((r) => {
+          let code = r.data.code
+          if (code === 0) {
+            this.subBranch = r.data.data
+          }
+        }).catch(() => {
+        })
+      }
     },
     idCardFrontHandleRemove (file) {
       if (this.idCardFrontUploading) {
@@ -445,16 +471,18 @@ export default {
       formData.append('file', idCardFrontFileList[0])
       formData.append('fileType', '1')
       this.idCardFrontUploading = true
-      this.$upload('/sys/merchant/upload', formData).then((r) => {
+      this.$upload('/merchant/upload', formData).then((r) => {
         this.idCardFrontUploading = false
         this.idCardFrontFileList = []
         if (r.data.code === 0) {
           this.resultData.id_card_copy = r.data.data
+          this.$message.success('上传成功')
         }
       }).catch((r) => {
         console.error(r)
         this.idCardFrontUploading = false
         this.idCardFrontFileList = []
+        this.$message.error('上传失败')
       })
     },
     idCardBackHandleUpload () {
@@ -463,16 +491,18 @@ export default {
       formData.append('file', idCardBackFileList[0])
       formData.append('fileType', '2')
       this.idCardBackUploading = true
-      this.$upload('common/addImage', formData).then((r) => {
+      this.$upload('/merchant/upload', formData).then((r) => {
         this.idCardBackUploading = false
         this.idCardBackFileList = []
         if (r.data.code === 0) {
           this.resultData.id_card_national = r.data.data
+          this.$message.success('上传成功')
         }
       }).catch((r) => {
         console.error(r)
         this.idCardBackUploading = false
         this.idCardBackFileList = []
+        this.$message.error('上传失败')
       })
     },
     storeInHandleUpload () {
@@ -481,16 +511,18 @@ export default {
       formData.append('file', storeInFileList[0])
       formData.append('fileType', '3')
       this.storeInUploading = true
-      this.$upload('common/addImage', formData).then((r) => {
+      this.$upload('/merchant/upload', formData).then((r) => {
         this.storeInUploading = false
         this.storeInFileList = []
         if (r.data.code === 0) {
           this.resultData.store_entrance_pic = r.data.data
+          this.$message.success('上传成功')
         }
       }).catch((r) => {
         console.error(r)
         this.storeInUploading = false
         this.storeInFileList = []
+        this.$message.error('上传失败')
       })
     },
     storeOutHandleUpload () {
@@ -499,24 +531,35 @@ export default {
       formData.append('file', storeOutFileList[0])
       formData.append('fileType', '4')
       this.storeOutUploading = true
-      this.$upload('common/addImage', formData).then((r) => {
+      this.$upload('/merchant/upload', formData).then((r) => {
         this.storeOutUploading = false
         this.storeOutFileList = []
         if (r.data.code === 0) {
           this.resultData.indoor_pic = r.data.data
+          this.$message.success('上传成功')
         }
       }).catch((r) => {
         console.error(r)
         this.storeOutUploading = false
         this.storeOutFileList = []
+        this.$message.error('上传失败')
       })
     },
     onClose () {
       this.reset()
       this.$emit('close')
     },
+    // 提交进件请求
     handleSubmit () {
-      this.$emit('success')
+      this.$post('merchant/merchantApply', {
+        ...this.resultData
+      }).then((r) => {
+        let code = r.data.code
+        if (code === 0) {
+          this.$emit('success')
+        }
+      }).catch(() => {
+      })
     }
   },
   watch: {

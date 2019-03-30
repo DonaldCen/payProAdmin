@@ -13,7 +13,7 @@ export default {
     theme: db.get('THEME', 'light'),
     layout: db.get('LAYOUT', 'side'),
     systemName: '盈宝聚合支付平台',
-    copyright: `${new Date().getFullYear()} <a href="https://mrbird.cc" target="_blank">MrBird</a>`,
+    copyright: `${new Date().getFullYear()} <a href="https://mrbird.cc" target="_blank">YX</a>`,
     multipage: getBooleanValue(db.get('MULTIPAGE'), true),
     fixSiderbar: getBooleanValue(db.get('FIX_SIDERBAR'), true),
     fixHeader: getBooleanValue(db.get('FIX_HEADER'), true),

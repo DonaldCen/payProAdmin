@@ -37,9 +37,9 @@
     </div>
     <div>
       <div class="operator">
-        <a-button type="primary" ghost @click="add" v-hasPermission="'user:add'">新增</a-button>
-        <a-button @click="batchDelete" v-hasPermission="'user:delete'">删除</a-button>
-        <a-dropdown v-hasAnyPermission="'user:reset','user:export'">
+        <a-button type="primary" ghost @click="add" v-hasPermission="'merchantApply:add'">商户进件</a-button>
+        <!--<a-button @click="batchDelete" v-hasPermission="'user:delete'">删除</a-button>-->
+        <!--<a-dropdown v-hasAnyPermission="'user:reset','user:export'">
           <a-menu slot="overlay">
             <a-menu-item v-hasPermission="'user:reset'" key="password-reset" @click="resetPassword">密码重置</a-menu-item>
             <a-menu-item v-hasPermission="'user:export'" key="export-data" @click="exportExcel">导出Excel</a-menu-item>
@@ -47,7 +47,7 @@
           <a-button>
             更多操作 <a-icon type="down" />
           </a-button>
-        </a-dropdown>
+        </a-dropdown>-->
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo"
@@ -56,7 +56,7 @@
                :pagination="pagination"
                :loading="loading"
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-               :scroll="{ x: 900 }"
+               :scroll="{ x: 2500 }"
                @change="handleTableChange">
         <template slot="email" slot-scope="text, record">
           <a-popover placement="topLeft">
@@ -74,7 +74,9 @@
         </template>
       </a-table>
     </div>
-    <merchant-regist :merchantRegist="merchantRegist.visiable" @close="handleMerchantRegistClose">
+    <merchant-regist :merchantRegist="merchantRegist.visiable"
+                     @close="handleMerchantRegistClose"
+                     @success="handleMerchantApplyAddSuccess">
     </merchant-regist>
   </a-card>
 </template>
@@ -225,14 +227,14 @@ export default {
       this.userInfo.visiable = true
     },
     add () {
-      this.userAdd.visiable = true
+      this.merchantRegist.visiable = true
     },
     handleUserAddClose () {
       this.userAdd.visiable = false
     },
-    handleUserAddSuccess () {
-      this.userAdd.visiable = false
-      this.$message.success('新增用户成功，初始密码为1234qwer')
+    handleMerchantApplyAddSuccess () {
+      this.merchantRegist.visiable = false
+      this.$message.success('生成二维码中。。')
       this.search()
     },
     edit (record) {
@@ -263,30 +265,7 @@ export default {
       }
     },
     batchDelete () {
-      if (!this.selectedRowKeys.length) {
-        this.$message.warning('请选择需要删除的记录')
-        return
-      }
-      let that = this
-      this.$confirm({
-        title: '确定删除所选中的记录?',
-        content: '当您点击确定按钮后，这些记录将会被彻底删除',
-        centered: true,
-        onOk () {
-          let userIds = []
-          for (let key of that.selectedRowKeys) {
-            userIds.push(that.dataSource[key].userId)
-          }
-          that.$delete('user/' + userIds.join(',')).then(() => {
-            that.$message.success('删除成功')
-            that.selectedRowKeys = []
-            that.search()
-          })
-        },
-        onCancel () {
-          that.selectedRowKeys = []
-        }
-      })
+      this.$message.warning('请选择需要删除的记录')
     },
     resetPassword () {
       if (!this.selectedRowKeys.length) {
@@ -396,7 +375,7 @@ export default {
         params.pageSize = this.pagination.defaultPageSize
         params.pageNum = this.pagination.defaultCurrent
       }
-      this.$get('user', {
+      this.$get('merchantApply', {
         ...params
       }).then((r) => {
         let data = r.data
