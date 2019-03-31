@@ -38,16 +38,6 @@
     <div>
       <div class="operator">
         <a-button type="primary" ghost @click="add" v-hasPermission="'merchantApply:add'">商户进件</a-button>
-        <!--<a-button @click="batchDelete" v-hasPermission="'user:delete'">删除</a-button>-->
-        <!--<a-dropdown v-hasAnyPermission="'user:reset','user:export'">
-          <a-menu slot="overlay">
-            <a-menu-item v-hasPermission="'user:reset'" key="password-reset" @click="resetPassword">密码重置</a-menu-item>
-            <a-menu-item v-hasPermission="'user:export'" key="export-data" @click="exportExcel">导出Excel</a-menu-item>
-          </a-menu>
-          <a-button>
-            更多操作 <a-icon type="down" />
-          </a-button>
-        </a-dropdown>-->
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo"
@@ -58,19 +48,9 @@
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
                :scroll="{ x: 2500 }"
                @change="handleTableChange">
-        <template slot="email" slot-scope="text, record">
-          <a-popover placement="topLeft">
-            <template slot="content">
-              <div>{{text}}</div>
-            </template>
-            <p style="width: 150px;margin-bottom: 0">{{text}}</p>
-          </a-popover>
-        </template>
         <template slot="operation" slot-scope="text, record">
-          <a-icon v-hasPermission="'user:update'" type="setting" theme="twoTone" twoToneColor="#4a9ff5" @click="edit(record)" title="修改用户"></a-icon>
-          &nbsp;
-          <a-icon v-hasPermission="'user:view'" type="eye" theme="twoTone" twoToneColor="#42b983" @click="view(record)" title="查看"></a-icon>
-          <a-badge v-hasNoPermission="'user:update','user:view'" status="warning" text="无权限"></a-badge>
+          <a-icon v-hasPermission="'merchantApply:view'" type="eye" theme="twoTone" twoToneColor="#4a9ff5" @click="checkSignStatus(record)" title="查看签约状态"></a-icon>
+          <a-badge v-hasNoPermission="'merchantApply:view'" status="warning" text="无权限"></a-badge>
         </template>
       </a-table>
     </div>
@@ -78,6 +58,13 @@
                      @close="handleMerchantRegistClose"
                      @success="handleMerchantApplyAddSuccess">
     </merchant-regist>
+    <merchant-sign :merchantApplyVisiable="merchantApplyVisiable.visiable"
+                   :merchantApplyData="merchantApplyVisiable.data"
+                   @close="handleMerchantInfoClose"
+                   @success="handleMerchantInfoSuccess"
+    >
+
+    </merchant-sign>
   </a-card>
 </template>
 
@@ -85,10 +72,11 @@
 import DeptInputTree from '../dept/DeptInputTree'
 import RangeDate from '@/components/datetime/RangeDate'
 import MerchantRegist from './MerchantRegist'
+import MerchantSign from './MerchantInfo'
 
 export default {
   name: 'Merchant',
-  components: {DeptInputTree, RangeDate, MerchantRegist},
+  components: {MerchantSign, DeptInputTree, RangeDate, MerchantRegist},
   data () {
     return {
       advanced: false,
@@ -96,7 +84,14 @@ export default {
         visiable: false,
         data: {}
       },
+      merchantApplyVisiable: {
+        visiable: false,
+        data: {}
+      },
       merchantRegist: {
+        visiable: false
+      },
+      signInfoVisible: {
         visiable: false
       },
       userAdd: {
@@ -127,6 +122,11 @@ export default {
       let { sortedInfo } = this
       sortedInfo = sortedInfo || {}
       return [{
+        title: 'ID',
+        dataIndex: 'id',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
+      }, {
         title: '身份证姓名',
         dataIndex: 'idCardName',
         sorter: true,
@@ -193,9 +193,37 @@ export default {
         sortOrder: sortedInfo.columnKey === 'contact' && sortedInfo.order
       }, {
         title: '手机号码',
-        dataIndex: 'contact_phone',
+        dataIndex: 'servicePhone',
         sorter: true,
-        sortOrder: sortedInfo.columnKey === 'contact_phone' && sortedInfo.order
+        sortOrder: sortedInfo.columnKey === 'servicePhone' && sortedInfo.order
+      }, {
+        title: '状态',
+        dataIndex: 'status',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case 'AUDITING':
+              return <a-tag color="cyan">审核中</a-tag>
+            case 'REJECTED':
+              return <a-tag color="red">已驳回</a-tag>
+            case 'FROZEN':
+              return <a-tag color="blue">已冻结</a-tag>
+            case 'TO_BE_SIGNED':
+              return <a-tag color="green">待签约</a-tag>
+            case 'FINISH':
+              return <a-tag color="orange">完成</a-tag>
+            default:
+              return <a-tag color="#2db7f5">其他</a-tag>
+          }
+        },
+        filters: [
+          { text: '审核中', value: 'AUDITING' },
+          { text: '已驳回', value: 'REJECTED' },
+          { text: '已冻结', value: 'FROZEN' },
+          { text: '待签约', value: 'TO_BE_SIGNED' },
+          { text: '完成', value: 'FINISH' }
+        ],
+        filterMultiple: false,
+        onFilter: (value, record) => record.status.includes(value)
       }, {
         title: '联系邮箱',
         dataIndex: 'contactEmail',
@@ -237,9 +265,17 @@ export default {
       this.$message.success('生成二维码中。。')
       this.search()
     },
+    handleMerchantInfoSuccess () {
+      this.merchantApplyVisiable.visiable = false
+      this.search()
+    },
     edit (record) {
       this.$refs.userEdit.setFormValues(record)
       this.userEdit.visiable = true
+    },
+    checkSignStatus (record) {
+      this.merchantApplyVisiable.data = record
+      this.merchantApplyVisiable.visiable = true
     },
     handleUserEditClose () {
       this.userEdit.visiable = false
@@ -254,6 +290,9 @@ export default {
     },
     handleMerchantRegistClose () {
       this.merchantRegist.visiable = false
+    },
+    handleMerchantInfoClose () {
+      this.merchantApplyVisiable.visiable = false
     },
     handleDeptChange (value) {
       this.queryParams.deptId = value || ''

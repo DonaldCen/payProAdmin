@@ -546,7 +546,6 @@ export default {
       })
     },
     onClose () {
-      this.reset()
       this.$emit('close')
     },
     // 提交进件请求
@@ -554,11 +553,17 @@ export default {
       this.$post('merchant/merchantApply', {
         ...this.resultData
       }).then((r) => {
-        let code = r.data.code
+        let data = r.data
+        let code = data.code
+        let msg = data.msg
         if (code === 0) {
           this.$emit('success')
+        } else {
+          this.$message.error(msg)
+          this.$emit('close')
         }
       }).catch(() => {
+        this.$message.error('进件请求异常')
       })
     }
   },

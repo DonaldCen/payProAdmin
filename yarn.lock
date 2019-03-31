@@ -113,6 +113,12 @@
   version "0.0.30"
   resolved "http://registry.npm.taobao.org/@types/strip-json-comments/download/@types/strip-json-comments-0.0.30.tgz#9aa30c04db212a9a0649d6ae6fd50accc40748a1"
 
+"@xkeshi/vue-qrcode@github:xkeshi/vue-qrcode":
+  version "1.0.0"
+  resolved "https://codeload.github.com/xkeshi/vue-qrcode/tar.gz/397b8d148d47bb2c139db9c52323730eba65a14f"
+  dependencies:
+    qrious "^4.0.2"
+
 abab@^1.0.4:
   version "1.0.4"
   resolved "http://registry.npm.taobao.org/abab/download/abab-1.0.4.tgz#5faad9c2c07f60dd76770f71cf025b62a63cfd4e"
@@ -468,6 +474,11 @@ asynckit@^0.4.0:
 atob@^2.1.1:
   version "2.1.1"
   resolved "http://registry.npm.taobao.org/atob/download/atob-2.1.1.tgz#ae2d5a729477f289d60dd7f96a6314a22dd6c22a"
+
+audit@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/audit/-/audit-0.0.6.tgz#fef17dd84af1dcd2a5633fd46d3b1adcb084bf3b"
+  integrity sha1-/vF92Erx3NKlYz/UbTsa3LCEvzs=
 
 autoprefixer@^6.3.1:
   version "6.7.7"
@@ -3215,6 +3226,15 @@ find-up@^2.0.0, find-up@^2.1.0:
   dependencies:
     locate-path "^2.0.0"
 
+fix@0.0.6:
+  version "0.0.6"
+  resolved "https://registry.yarnpkg.com/fix/-/fix-0.0.6.tgz#07e593a27414ddc486ee52d50f9c8e09885a0305"
+  integrity sha1-B+WTonQU3cSG7lLVD5yOCYhaAwU=
+  dependencies:
+    pipe "0.0.2"
+    underscore "1.1.6"
+    underscore.string "1.1.4"
+
 flat-cache@^1.2.1:
   version "1.3.0"
   resolved "http://registry.npm.taobao.org/flat-cache/download/flat-cache-1.3.0.tgz#d3030b32b38154f4e3b7e9c709f490f7ef97c481"
@@ -5882,6 +5902,11 @@ pinkie@^2.0.0:
   version "2.0.4"
   resolved "http://registry.npm.taobao.org/pinkie/download/pinkie-2.0.4.tgz#72556b80cfa0d48a974e80e77248e80ed4f7f870"
 
+pipe@0.0.2:
+  version "0.0.2"
+  resolved "https://registry.yarnpkg.com/pipe/-/pipe-0.0.2.tgz#a16fe6fc019d75bd987c4928a67e1e50e4f5b44f"
+  integrity sha1-oW/m/AGddb2YfEkopn4eUOT1tE8=
+
 pkg-dir@^1.0.0:
   version "1.0.0"
   resolved "http://registry.npm.taobao.org/pkg-dir/download/pkg-dir-1.0.0.tgz#7a4b508a8d5bb2d629d447056ff4e9c9314cf3d4"
@@ -6361,6 +6386,11 @@ q@1.4.1:
 q@^1.1.2:
   version "1.5.1"
   resolved "http://registry.npm.taobao.org/q/download/q-1.5.1.tgz#7e32f75b41381291d04611f1bf14109ac00651d7"
+
+qrious@^4.0.2:
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/qrious/-/qrious-4.0.2.tgz#09c4d4079d2b961617f62c69cff3b9bb66a39693"
+  integrity sha512-xWPJIrK1zu5Ypn898fBp8RHkT/9ibquV2Kv24S/JY9VYEhMBMKur1gHVsOiNUh7PHP9uCgejjpZUHUIXXKoU/g==
 
 qs@6.5.1:
   version "6.5.1"
@@ -7694,6 +7724,18 @@ uglifyjs-webpack-plugin@^1.1.1:
     uglify-es "^3.3.4"
     webpack-sources "^1.1.0"
     worker-farm "^1.5.2"
+
+underscore.string@1.1.4:
+  version "1.1.4"
+  resolved "https://registry.yarnpkg.com/underscore.string/-/underscore.string-1.1.4.tgz#9be06b23b8e3d996ea2020f9984202069e3dee12"
+  integrity sha1-m+BrI7jj2ZbqICD5mEICBp497hI=
+  dependencies:
+    underscore "1.1.6"
+
+underscore@1.1.6:
+  version "1.1.6"
+  resolved "https://registry.yarnpkg.com/underscore/-/underscore-1.1.6.tgz#6868da1bdd72d75285be0b4e50f228e70d001a2c"
+  integrity sha1-aGjaG91y11KFvgtOUPIo5w0AGiw=
 
 union-value@^1.0.0:
   version "1.0.0"
