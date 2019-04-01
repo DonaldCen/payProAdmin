@@ -96,7 +96,7 @@
           v-decorator="['bank_name',{rules: [{ required: true, message: '详细支行信息不能为空'}]}]"
           @select="handleSubBankSelect">
           <template slot="dataSource">
-            <a-select-option v-for="subBank in subBranch" :key="subBank.id.toString()">
+            <a-select-option v-for="subBank in subBranch" :key="subBank.bankName">
               {{subBank.bankName}}
             </a-select-option>
           </template>

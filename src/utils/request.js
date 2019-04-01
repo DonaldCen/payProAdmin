@@ -8,6 +8,7 @@ moment.locale('zh-cn')
 // 统一配置
 let FEBS_REQUEST = axios.create({
   baseURL: 'https://jhpay.gdyinxing.cn/sys/',
+  // baseURL: 'http://localhost:9527/sys/',
   responseType: 'json',
   validateStatus (status) {
     // 200 外的状态码都认定为失败

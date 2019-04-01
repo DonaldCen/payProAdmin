@@ -49,6 +49,7 @@
                :scroll="{ x: 2500 }"
                @change="handleTableChange">
         <template slot="operation" slot-scope="text, record">
+          <a-icon v-hasPermission="'merchantApply:view'"  type="sync" twoToneColor="#4a9ff5" @click="changeSignStatus(record)" title="刷新签约状态"></a-icon>
           <a-icon v-hasPermission="'merchantApply:view'" type="eye" theme="twoTone" twoToneColor="#4a9ff5" @click="checkSignStatus(record)" title="查看签约状态"></a-icon>
           <a-badge v-hasNoPermission="'merchantApply:view'" status="warning" text="无权限"></a-badge>
         </template>
@@ -276,6 +277,34 @@ export default {
     checkSignStatus (record) {
       this.merchantApplyVisiable.data = record
       this.merchantApplyVisiable.visiable = true
+    },
+    changeSignStatus (record) {
+      let applymentId = record.applymentID
+      if (applymentId) {
+        let apply = {
+          'applymentId': applymentId
+        }
+        this.$post('merchantSign/upStatus', {
+          ...apply
+        }).then((r) => {
+          let code = r.data.code
+          let msg = r.data.msg
+          if (code !== 0) {
+            this.$notification['warn']({
+              message: '提示',
+              description: msg
+            })
+          } else {
+            this.$router.go(0)
+          }
+        }).catch(() => {
+        })
+      } else {
+        this.$notification['warn']({
+          message: '提示',
+          description: '还在审核状态，请耐心等待'
+        })
+      }
     },
     handleUserEditClose () {
       this.userEdit.visiable = false
