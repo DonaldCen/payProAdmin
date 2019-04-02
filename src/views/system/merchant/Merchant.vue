@@ -50,6 +50,7 @@
                @change="handleTableChange">
         <template slot="operation" slot-scope="text, record">
           <a-icon v-hasPermission="'merchantApply:view'"  type="sync" twoToneColor="#4a9ff5" @click="changeSignStatus(record)" title="刷新签约状态"></a-icon>
+          &nbsp;
           <a-icon v-hasPermission="'merchantApply:view'" type="eye" theme="twoTone" twoToneColor="#4a9ff5" @click="checkSignStatus(record)" title="查看签约状态"></a-icon>
           <a-badge v-hasNoPermission="'merchantApply:view'" status="warning" text="无权限"></a-badge>
         </template>
@@ -123,10 +124,15 @@ export default {
       let { sortedInfo } = this
       sortedInfo = sortedInfo || {}
       return [{
-        title: 'ID',
-        dataIndex: 'id',
+        title: '商户ID',
+        dataIndex: 'subMchId',
         sorter: true,
-        sortOrder: sortedInfo.columnKey === 'id' && sortedInfo.order
+        sortOrder: sortedInfo.subMchId === 'id' && sortedInfo.order
+      }, {
+        title: '商户简称',
+        dataIndex: 'merchantShortName',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'merchantShortName' && sortedInfo.order
       }, {
         title: '身份证姓名',
         dataIndex: 'idCardName',
@@ -167,11 +173,6 @@ export default {
         dataIndex: 'storeStreet',
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'storeStreet' && sortedInfo.order
-      }, {
-        title: '商户简称',
-        dataIndex: 'merchantShortName',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'merchantShortName' && sortedInfo.order
       }, {
         title: '客服电话',
         dataIndex: 'servicePhone',
@@ -294,9 +295,8 @@ export default {
               message: '提示',
               description: msg
             })
-          } else {
-            this.$router.go(0)
           }
+          this.fetch()
         }).catch(() => {
         })
       } else {

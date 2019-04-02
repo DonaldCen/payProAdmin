@@ -58,11 +58,13 @@
       <a-form-item label='身份证姓名'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.id_card_name"
+                 placeholder="请输入身份证姓名"
                  v-decorator="['id_card_name',{rules: [{ required: true, message: '身份证姓名不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='身份证号码'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.id_card_number"
+                 placeholder="请输入身份证号码"
                  v-decorator="['id_card_number',{rules: [{ required: true, message: '身份证号码不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='身份证有效时间'
@@ -73,13 +75,14 @@
       <a-form-item label='开户名称'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.account_name"
+                 placeholder="请输入开户名称"
                  v-decorator="['account_name',{rules: [{ required: true, message: '开户名称不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='开户银行' v-bind="formItemLayout">
         <a-select
           @change="handleBankChange"
           style="width: 400px"
-          v-decorator="['bankId',{rules: [{ required: true, message: '请选择开户银行' }]}]">
+          v-decorator="['bankId',{rules: [{ required: true, message: '请选择开户银行' }],initialValue:33}]">
           <a-select-option v-for="bank in bankData" :key="bank.id">{{bank.bankName}}</a-select-option>
         </a-select>
       </a-form-item>
@@ -96,7 +99,7 @@
           v-decorator="['bank_name',{rules: [{ required: true, message: '详细支行信息不能为空'}]}]"
           @select="handleSubBankSelect">
           <template slot="dataSource">
-            <a-select-option v-for="subBank in subBranch" :key="subBank.bankName">
+            <a-select-option v-for="subBank in subBranch" :key="subBank.id.toString()">
               {{subBank.bankName}}
             </a-select-option>
           </template>
@@ -105,11 +108,13 @@
       <a-form-item label='银行账户'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.account_number"
+                 placeholder="请输入银行账户"
                  v-decorator="['account_number',{rules: [{ required: true, message: '银行账户不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='门店名称'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.store_name"
+                 placeholder="请输入门店名称"
                  v-decorator="['store_name',{rules: [{ required: true, message: '门店名称不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='门店省市' v-bind="formItemLayout">
@@ -123,6 +128,7 @@
       <a-form-item label='街道名称'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.store_street"
+                 placeholder="请输入街道名称"
                  v-decorator="['store_street',{rules: [{ required: true, message: '街道名称不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='门店门口照' v-bind="formItemLayout">
@@ -174,11 +180,13 @@
       <a-form-item label='商户简称'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.merchant_shortname"
+                 placeholder="请输入商户简称"
                  v-decorator="['merchant_shortname',{rules: [{ required: true, message: '商户简称不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='客服电话'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.service_phone"
+                 placeholder="请输入客服电话"
                  v-decorator="['service_phone',{rules: [{ required: true, message: '客服电话不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='商户描述'
@@ -186,27 +194,29 @@
         <a-select
           @change="handleProductDescChange"
           style="width: 400px"
-          v-decorator="['product_desc',{rules: [{ required: true, message: '客服电话不能为空'}]}]"
+          v-decorator="['product_desc',{rules: [{ required: true, message: '客服电话不能为空'}],initialValue:'餐饮'}]"
         >
           <a-select-option v-for="desc in productDescData" :key="desc">{{desc}}</a-select-option>
         </a-select>
       </a-form-item>
-      <a-form-item label='费率' v-bind="formItemLayout">
+      <a-form-item label='费率' v-bind="formItemLayout" >
         <a-select
           @change="handleRateChange"
           style="width: 400px"
-          v-decorator="['rateId',{rules: [{ required: true, message: '请选择费率' }]}]">
-          <a-select-option v-for="rate in rateData" :key="rate.id">{{rate.rate}}</a-select-option>
+          v-decorator="['rateId',{rules: [{ required: true, message: '请选择费率' }],initialValue:39}]">
+          <a-select-option v-for="rate in rateData" :key="rate.id" :class="rate.id == 1 ? 'red':'red'">{{rate.rate}}</a-select-option>
         </a-select>
       </a-form-item>
       <a-form-item label='联系人姓名'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.contact"
+                 placeholder="请输入联系人姓名"
                  v-decorator="['contact',{rules: [{ required: true, message: '联系人姓名不能为空'}]}]"/>
       </a-form-item>
       <a-form-item label='手机号'
                    v-bind="formItemLayout">
         <a-input v-model="resultData.contact_phone"
+                 placeholder="请输入手机号"
                  v-decorator="['contact_phone',{rules: [{ required: true, message: '手机号不能为空'}]}]"/>
       </a-form-item>
     </a-form>
