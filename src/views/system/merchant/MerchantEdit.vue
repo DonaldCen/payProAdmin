@@ -75,7 +75,7 @@ const formItemLayout = {
   wrapperCol: { span: 18 }
 }
 export default {
-  name: 'UserEdit',
+  name: 'MerchantEdit',
   props: {
     userEditVisiable: {
       default: false
