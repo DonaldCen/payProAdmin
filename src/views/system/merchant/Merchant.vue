@@ -5,21 +5,36 @@
       <a-form layout="horizontal">
         <a-row >
         <div :class="advanced ? null: 'fold'">
-            <a-col :md="12" :sm="24" >
+            <a-col :md="6" :sm="10" >
               <a-form-item
-                label="用户名"
+                label="商户简称"
                 :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
-                <a-input v-model="queryParams.username"/>
+                :wrapperCol="{span: 10, offset: 2}">
+                <a-input v-model="queryParams.merchantShortName"/>
               </a-form-item>
             </a-col>
           <template v-if="advanced">
-            <a-col :md="12" :sm="24" >
+          <a-col :md="6" :sm="10" >
+            <a-form-item
+              label="创建时间"
+              :labelCol="{span: 4}"
+              :wrapperCol="{span: 15, offset: 2}">
+              <range-date @change="handleDateChange" ref="createTime"></range-date>
+            </a-form-item>
+          </a-col>
+        </template>
+          <template v-if="advanced">
+            <a-col :md="6" :sm="10" >
               <a-form-item
-                label="创建时间"
+                label="商户状态"
                 :labelCol="{span: 4}"
-                :wrapperCol="{span: 18, offset: 2}">
-                <range-date @change="handleDateChange" ref="createTime"></range-date>
+                :wrapperCol="{span: 10, offset: 2}">
+                <a-select
+                  @change="handleStatusChange"
+                  style="width: 400px"
+                  v-decorator="['status',{rules: [{ required: true, message: '请选择开户银行' }]}]">
+                  <a-select-option v-for="status in merchantStatus" :key="status.id">{{status.name}}</a-select-option>
+                </a-select>
               </a-form-item>
             </a-col>
           </template>
@@ -38,6 +53,7 @@
     <div>
       <div class="operator">
         <a-button type="primary" ghost @click="add" v-hasPermission="'merchantApply:add'">商户进件</a-button>
+        <a-button type="primary" ghost @click="exportExcel" v-hasPermission="'merchantApply:export'">导出Excel</a-button>
       </div>
       <!-- 表格区域 -->
       <a-table ref="TableInfo"
@@ -46,7 +62,7 @@
                :pagination="pagination"
                :loading="loading"
                :rowSelection="{selectedRowKeys: selectedRowKeys, onChange: onSelectChange}"
-               :scroll="{ x: 2500 }"
+               :scroll="{ x: 2600 }"
                @change="handleTableChange">
         <template slot="operation" slot-scope="text, record">
           <a-icon v-hasPermission="'merchantApply:view'"  type="sync" twoToneColor="#4a9ff5" @click="changeSignStatus(record)" title="刷新签约状态"></a-icon>
@@ -102,6 +118,7 @@ export default {
       userEdit: {
         visiable: false
       },
+      merchantStatus: [],
       queryParams: {},
       filteredInfo: null,
       sortedInfo: null,
@@ -144,6 +161,11 @@ export default {
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'idCardNumber' && sortedInfo.order
       }, {
+        title: '银行账号',
+        dataIndex: 'accountNumber',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'accountNumber' && sortedInfo.order
+      }, {
         title: '身份证有效期限',
         dataIndex: 'idCardValidTime',
         sorter: true,
@@ -163,11 +185,6 @@ export default {
         dataIndex: 'bankName',
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'bankName' && sortedInfo.order
-      }, {
-        title: '银行账号',
-        dataIndex: 'accountNumber',
-        sorter: true,
-        sortOrder: sortedInfo.columnKey === 'accountNumber' && sortedInfo.order
       }, {
         title: '门店街道名称',
         dataIndex: 'storeStreet',
@@ -232,6 +249,11 @@ export default {
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'contactEmail' && sortedInfo.order
       }, {
+        title: '创建时间',
+        dataIndex: 'createDate',
+        sorter: true,
+        sortOrder: sortedInfo.columnKey === 'createDate' && sortedInfo.order
+      }, {
         title: '操作',
         dataIndex: 'operation',
         scopedSlots: { customRender: 'operation' }
@@ -240,10 +262,24 @@ export default {
   },
   mounted () {
     this.fetch()
+    this.getMerchantApplyData()
   },
   methods: {
     onSelectChange (selectedRowKeys) {
       this.selectedRowKeys = selectedRowKeys
+    },
+    handleStatusChange (val) {
+      console.log(val)
+      this.queryParams.status = val
+    },
+    getMerchantApplyData () {
+      this.merchantStatus = [
+        {id: '-1', name: '所有'},
+        {id: 'AUDITING', name: '审核中'},
+        {id: 'REJECTED', name: '已驳回'},
+        {id: 'FROZEN', name: '已冻结'},
+        {id: 'TO_BE_SIGNED', name: '待签约'},
+        {id: 'FINISH', name: '完成'}]
     },
     toggleAdvanced () {
       this.advanced = !this.advanced
@@ -258,6 +294,11 @@ export default {
     },
     add () {
       this.merchantRegist.visiable = true
+    },
+    exportExcel () {
+      this.$export('merchantApply/excel', {
+        ...this.queryParams
+      })
     },
     handleUserAddClose () {
       this.userAdd.visiable = false
@@ -360,21 +401,6 @@ export default {
         onCancel () {
           that.selectedRowKeys = []
         }
-      })
-    },
-    exportExcel () {
-      let {sortedInfo, filteredInfo} = this
-      let sortField, sortOrder
-      // 获取当前列的排序和列的过滤规则
-      if (sortedInfo) {
-        sortField = sortedInfo.field
-        sortOrder = sortedInfo.order
-      }
-      this.$export('user/excel', {
-        sortField: sortField,
-        sortOrder: sortOrder,
-        ...this.queryParams,
-        ...filteredInfo
       })
     },
     search () {

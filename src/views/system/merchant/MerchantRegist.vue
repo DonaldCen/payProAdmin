@@ -99,7 +99,7 @@
           v-decorator="['bank_name',{rules: [{ required: true, message: '详细支行信息不能为空'}]}]"
           @select="handleSubBankSelect">
           <template slot="dataSource">
-            <a-select-option v-for="subBank in subBranch" :key="subBank.id.toString()">
+            <a-select-option v-for="subBank in subBranch" :key="subBank.bankName">
               {{subBank.bankName}}
             </a-select-option>
           </template>
@@ -242,7 +242,10 @@ export default {
   },
   data () {
     return {
-      resultData: {},
+      resultData: {
+        bankId: 33,
+        rateId: 39
+      },
       bankData: [],
       rateData: [],
       productDescData: [],
@@ -258,7 +261,9 @@ export default {
       idCardBackUploading: false,
       storeInUploading: false,
       storeOutUploading: false,
-      bank: {},
+      bank: {
+        parentId: 33
+      },
       parentId: 0,
       loading: false,
       roleData: [],
