@@ -141,10 +141,43 @@ export default {
       let { sortedInfo } = this
       sortedInfo = sortedInfo || {}
       return [{
+        title: '操作',
+        dataIndex: 'operation',
+        scopedSlots: { customRender: 'operation' }
+      },
+      {
         title: '商户ID',
         dataIndex: 'subMchId',
         sorter: true,
         sortOrder: sortedInfo.subMchId === 'id' && sortedInfo.order
+      }, {
+        title: '状态',
+        dataIndex: 'status',
+        customRender: (text, row, index) => {
+          switch (text) {
+            case 'AUDITING':
+              return <a-tag color="cyan">审核中</a-tag>
+            case 'REJECTED':
+              return <a-tag color="red">已驳回</a-tag>
+            case 'FROZEN':
+              return <a-tag color="blue">已冻结</a-tag>
+            case 'TO_BE_SIGNED':
+              return <a-tag color="green">待签约</a-tag>
+            case 'FINISH':
+              return <a-tag color="orange">完成</a-tag>
+            default:
+              return <a-tag color="#2db7f5">其他</a-tag>
+          }
+        },
+        filters: [
+          { text: '审核中', value: 'AUDITING' },
+          { text: '已驳回', value: 'REJECTED' },
+          { text: '已冻结', value: 'FROZEN' },
+          { text: '待签约', value: 'TO_BE_SIGNED' },
+          { text: '完成', value: 'FINISH' }
+        ],
+        filterMultiple: false,
+        onFilter: (value, record) => record.status.includes(value)
       }, {
         title: '商户简称',
         dataIndex: 'merchantShortName',
@@ -216,34 +249,6 @@ export default {
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'servicePhone' && sortedInfo.order
       }, {
-        title: '状态',
-        dataIndex: 'status',
-        customRender: (text, row, index) => {
-          switch (text) {
-            case 'AUDITING':
-              return <a-tag color="cyan">审核中</a-tag>
-            case 'REJECTED':
-              return <a-tag color="red">已驳回</a-tag>
-            case 'FROZEN':
-              return <a-tag color="blue">已冻结</a-tag>
-            case 'TO_BE_SIGNED':
-              return <a-tag color="green">待签约</a-tag>
-            case 'FINISH':
-              return <a-tag color="orange">完成</a-tag>
-            default:
-              return <a-tag color="#2db7f5">其他</a-tag>
-          }
-        },
-        filters: [
-          { text: '审核中', value: 'AUDITING' },
-          { text: '已驳回', value: 'REJECTED' },
-          { text: '已冻结', value: 'FROZEN' },
-          { text: '待签约', value: 'TO_BE_SIGNED' },
-          { text: '完成', value: 'FINISH' }
-        ],
-        filterMultiple: false,
-        onFilter: (value, record) => record.status.includes(value)
-      }, {
         title: '联系邮箱',
         dataIndex: 'contactEmail',
         sorter: true,
@@ -253,10 +258,6 @@ export default {
         dataIndex: 'createDate',
         sorter: true,
         sortOrder: sortedInfo.columnKey === 'createDate' && sortedInfo.order
-      }, {
-        title: '操作',
-        dataIndex: 'operation',
-        scopedSlots: { customRender: 'operation' }
       }]
     }
   },

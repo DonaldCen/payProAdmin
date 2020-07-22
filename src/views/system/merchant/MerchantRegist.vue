@@ -244,7 +244,8 @@ export default {
     return {
       resultData: {
         bankId: 33,
-        rateId: 39
+        rateId: 39,
+        product_desc: '餐饮'
       },
       bankData: [],
       rateData: [],
